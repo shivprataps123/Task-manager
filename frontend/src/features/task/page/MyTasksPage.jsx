@@ -44,16 +44,16 @@ export default function MyTasksPage() {
 
             <div className="bg-white border rounded-xl">
                 <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">
-                    Tasks ({tasks?.length})
+                    Tasks ({tasks?.tasks?.length})
                 </div>
 
-                <div className="divide-y">
-                    {tasks?.length === 0 ? (
+                <div className="divide-y rounded-b-lg">
+                    {tasks?.tasks?.length === 0 ? (
                         <div className="px-4 py-8 text-center text-gray-500">
                             No tasks yet
                         </div>
                     ) : (
-                        tasks?.map((task) => (
+                        tasks?.tasks?.map((task) => (
                             <TaskCard
                                 key={task.id}
                                 task={task}

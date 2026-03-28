@@ -30,7 +30,7 @@ export const fetchTasks = createAsyncThunk(
     'task/fetchTasks',
     async () => {
         const response = await getTasksAPI();
-        return response.data.data;
+        return response.data;
     }
 );
 
@@ -79,7 +79,7 @@ const taskSlice = createSlice({
             state.currentTask = action.payload;
         },
         addTask: (state, action: PayloadAction<Task>) => {
-            state.tasks.push(action.payload);
+            state?.tasks?.push(action.payload);
         },
         updateTaskAction: (state, action: PayloadAction<Task>) => {
             const index = state.tasks.findIndex(task => task.id === action.payload.id);
@@ -122,7 +122,7 @@ const taskSlice = createSlice({
                 state.error = action.error.message || 'Failed to fetch tasks';
             })
             .addCase(createTask.fulfilled, (state, action) => {
-                state.tasks.push(action.payload);
+                state?.tasks?.push(action.payload);
             })
             .addCase(updateTask.fulfilled, (state, action) => {
                 const index = state.tasks.findIndex(task => task.id === action.payload.id);

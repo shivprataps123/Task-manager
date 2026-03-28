@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InviteMemberModal from "../components/InviteMemberModal";
 import CreateTeamModal from "../components/CreateTeamModal";
+import CreateTeamMemberModal from "../components/CreateTeamMemberModal";
 import { fetchTeams } from "@/store/slices/teamSlice";
 
 export default function TeamPage() {
     const dispatch = useDispatch();
     const { teams, currentTeam, loading, error } = useSelector((state) => state.team);
     const membersList = useSelector((state) => state?.teamMember?.members)
-    console.log(membersList, 'memberlist')
     const [members, setMembers] = useState([]);
 
     const handleAddMember = (member) => {
@@ -73,6 +73,7 @@ export default function TeamPage() {
                         </div>
                         <div className="flex gap-2.5">
                             <CreateTeamModal onCreated={() => dispatch(fetchTeams())} />
+                            <CreateTeamMemberModal onMemberAdded={() => dispatch(fetchTeams())} />
                             <InviteMemberModal onAddMember={handleAddMember} />
                         </div>
                     </div>
@@ -80,7 +81,7 @@ export default function TeamPage() {
                     <div className="bg-white border rounded-xl">
 
                         <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">
-                            Members ({members.length})
+                            Members ({membersList?.length})
                         </div>
 
                         <div className="divide-y">

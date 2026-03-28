@@ -61,7 +61,7 @@ export default function TaskDetailModal({ task, onClose, onUpdate }) {
     return (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
 
-            <div className="bg-white w-full max-w-lg p-6 rounded-xl shadow-lg relative">
+            <div className="bg-white w-full max-w-lg p-6 rounded-xl shadow-lg relative h-[500px] overflow-x-scroll">
 
                 {/* CLOSE */}
                 <button

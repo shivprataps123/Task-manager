@@ -68,11 +68,11 @@ export default function Dashboard() {
                     <AddTaskModal onAddTask={handleAddTask} />
                 </div>
                 <KanbanBoard
-                    tasks={tasks}
+                    tasks={tasks?.tasks}
                     setTasks={(updatedTasks) => {
                         // Handle task updates from drag and drop
                         updatedTasks.forEach(task => {
-                            const originalTask = tasks.find(t => t.id === task.id);
+                            const originalTask = tasks?.tasks?.find(t => t.id === task.id);
                             if (originalTask && originalTask.status !== task.status) {
                                 handleTaskStatusChange(task.id, task.status);
                             }

@@ -17,7 +17,7 @@ export default function TaskCard({ task, onClick }) {
             ref={setNodeRef}
             style={style}
             onClick={() => onClick(task)}
-            className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:shadow transition"
+            className="bg-white p-3 rounded-b-xl shadow-sm border border-gray-200 cursor-pointer hover:shadow transition"
         >
             <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">

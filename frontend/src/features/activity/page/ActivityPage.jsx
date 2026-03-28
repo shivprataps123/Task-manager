@@ -41,27 +41,27 @@ export default function ActivityPage() {
 
             <div className="bg-white border rounded-xl">
                 <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">
-                    Recent Activity ({activities.length})
+                    Recent Activity ({activities?.length})
                 </div>
 
                 <div className="divide-y">
-                    {activities.length === 0 ? (
+                    {activities?.length === 0 ? (
                         <div className="px-4 py-8 text-center text-gray-500">
                             No activity yet
                         </div>
                     ) : (
-                        activities.map((activity) => (
+                        activities?.map((activity) => (
                             <div
-                                key={activity.id}
+                                key={activity?.id}
                                 className="px-4 py-3"
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm font-medium text-gray-900">
-                                            {activity.action}
+                                            {activity?.user?.email} is {activity?.action} in {activity?.project?.name} project.
                                         </p>
                                         <p className="text-xs text-gray-500 mt-1">
-                                            {new Date(activity.createdAt).toLocaleString()}
+                                            {new Date(activity?.createdAt).toLocaleString()}
                                         </p>
                                     </div>
                                 </div>

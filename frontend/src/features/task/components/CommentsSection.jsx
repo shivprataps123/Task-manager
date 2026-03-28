@@ -16,7 +16,7 @@ export default function CommentsSection({ comments, onAddComment, taskId, loadin
 
         try {
             await dispatch(createComment({
-                content: text,
+                text,
                 taskId,
             })).unwrap();
             setText("");
@@ -65,7 +65,7 @@ export default function CommentsSection({ comments, onAddComment, taskId, loadin
                         </p>
 
                         <p className="text-sm text-gray-800 mt-1">
-                            {c.content}
+                            {c.text}
                         </p>
                     </div>
                 ))}

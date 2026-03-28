@@ -14,7 +14,7 @@ export default function CreateProjectModal({ isOpen, onClose }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!currentTeam?.id) {
+        if (!currentTeam?.team?.id) {
             alert("Please select a team first before creating a project.");
             return;
         }
@@ -24,7 +24,7 @@ export default function CreateProjectModal({ isOpen, onClose }) {
         try {
             await dispatch(createProject({
                 ...form,
-                teamId: currentTeam.id
+                teamId: currentTeam?.team?.id
             })).unwrap();
             setForm({ name: "", description: "" });
             onClose();

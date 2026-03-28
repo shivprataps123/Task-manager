@@ -85,7 +85,6 @@ export default function AddTaskModal({ onAddTask }) {
                                 required
                             >
                                 <option value="">Select Project</option>
-                                {console.log(projects)}
                                 {projects.map((project) => (
                                     <option key={project.id} value={project.id}>
                                         {project.name}
