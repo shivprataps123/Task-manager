@@ -18,7 +18,7 @@ export const logActivity = async ({
     })
 }
 
-export const getActivitiesService = async (userId, teamId) => {
+export const getActivitiesService = async (userId, teamId, page = 1, limit = 20) => {
 
     const whereClause = {
         project: {
@@ -35,20 +35,37 @@ export const getActivitiesService = async (userId, teamId) => {
         whereClause.project.teamId = teamId;
     }
 
-    const activities = await prisma.activity.findMany({
-        where: whereClause,
-        orderBy: {
-            createdAt: "desc"
-        },
-        include: {
-            user: {
-                select: { id: true, email: true }
-            },
-            project: {
-                select: { id: true, name: true }
-            }
-        }
-    });
+    const skip = (page - 1) * limit;
 
-    return activities;
+    const [activities, total] = await Promise.all([
+        prisma.activity.findMany({
+            where: whereClause,
+            skip,
+            take: Number(limit),
+            orderBy: {
+                createdAt: "desc"
+            },
+            include: {
+                user: {
+                    select: { id: true, email: true }
+                },
+                project: {
+                    select: { id: true, name: true }
+                }
+            }
+        }),
+        prisma.activity.count({
+            where: whereClause
+        })
+    ]);
+
+    return {
+        activities,
+        pagination: {
+            total,
+            page: Number(page),
+            limit: Number(limit),
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 };

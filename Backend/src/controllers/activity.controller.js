@@ -2,12 +2,12 @@ import { getActivitiesService } from "../services/activity.service.js";
 
 export const getActivities = async (req, res, next) => {
     try {
-        const { teamId } = req.query;
-        const activities = await getActivitiesService(req.userId, teamId);
+        const { teamId, page, limit } = req.query;
+        const result = await getActivitiesService(req.userId, teamId, page, limit);
 
         res.status(200).json({
             success: true,
-            data: activities
+            data: result
         });
 
     } catch (err) {

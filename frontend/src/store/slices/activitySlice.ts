@@ -15,18 +15,25 @@ interface ActivityState {
     activities: Activity[];
     loading: boolean;
     error: string | null;
+    pagination: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    } | null;
 }
 
 const initialState: ActivityState = {
     activities: [],
     loading: false,
     error: null,
+    pagination: null,
 };
 
 export const fetchActivities = createAsyncThunk(
     'activity/fetchActivities',
-    async (teamId?: string) => {
-        const response = await getActivitiesAPI(teamId);
+    async ({ teamId, page, limit }: { teamId?: string; page?: number; limit?: number } = {}) => {
+        const response = await getActivitiesAPI(teamId, page, limit);
         return response.data.data;
     }
 );
@@ -35,8 +42,9 @@ const activitySlice = createSlice({
     name: 'activity',
     initialState,
     reducers: {
-        setActivities: (state, action: PayloadAction<Activity[]>) => {
-            state.activities = action.payload;
+        setActivities: (state, action: PayloadAction<{ activities: Activity[]; pagination: { total: number; page: number; limit: number; totalPages: number } }>) => {
+            state.activities = action.payload.activities;
+            state.pagination = action.payload.pagination;
             state.loading = false;
             state.error = null;
         },
@@ -62,7 +70,8 @@ const activitySlice = createSlice({
             })
             .addCase(fetchActivities.fulfilled, (state, action) => {
                 state.loading = false;
-                state.activities = action.payload;
+                state.activities = action.payload.activities;
+                state.pagination = action.payload.pagination;
             })
             .addCase(fetchActivities.rejected, (state, action) => {
                 state.loading = false;

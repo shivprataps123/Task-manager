@@ -1,19 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchActivities } from "@/store/slices/activitySlice";
 
 export default function ActivityPage() {
     const dispatch = useDispatch();
-    const { activities, loading, error } = useSelector((state) => state.activity);
+    const { activities, loading, error, pagination } = useSelector((state) => state.activity);
     const { currentTeam } = useSelector((state) => state.team);
+    const [currentPage, setCurrentPage] = useState(1);
+    const limit = 20;
 
     useEffect(() => {
         if (currentTeam?.team?.id) {
-            dispatch(fetchActivities(currentTeam.team.id));
+            dispatch(fetchActivities({ teamId: currentTeam.team.id, page: currentPage, limit }));
         } else {
-            dispatch(fetchActivities());
+            dispatch(fetchActivities({ page: currentPage, limit }));
         }
-    }, [dispatch, currentTeam]);
+    }, [dispatch, currentTeam, currentPage]);
 
     if (loading) {
         return (
@@ -46,7 +48,7 @@ export default function ActivityPage() {
 
             <div className="bg-white border rounded-xl">
                 <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">
-                    Recent Activity ({activities?.length})
+                    Recent Activity ({pagination?.total || 0})
                 </div>
 
                 <div className="divide-y">
@@ -74,6 +76,34 @@ export default function ActivityPage() {
                         ))
                     )}
                 </div>
+
+                {/* Pagination */}
+                {pagination && pagination.totalPages > 1 && (
+                    <div className="px-4 py-3 border-t flex items-center justify-between">
+                        <div className="text-sm text-gray-500">
+                            Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} activities
+                        </div>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setCurrentPage(pagination.page - 1)}
+                                disabled={pagination.page === 1}
+                                className="px-3 py-1 text-sm border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            >
+                                Previous
+                            </button>
+                            <span className="px-3 py-1 text-sm">
+                                Page {pagination.page} of {pagination.totalPages}
+                            </span>
+                            <button
+                                onClick={() => setCurrentPage(pagination.page + 1)}
+                                disabled={pagination.page === pagination.totalPages}
+                                className="px-3 py-1 text-sm border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
