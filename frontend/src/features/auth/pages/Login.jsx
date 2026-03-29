@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginAPI } from "../api";
 import Cookies from "js-cookie"
+import { setUser } from "@/store/slices/authSlice.js"
+import { useDispatch } from "react-redux";
 
 export default function Login() {
     const navigate = useNavigate();
-
+    const dispatch = useDispatch()
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -20,7 +22,7 @@ export default function Login() {
 
         try {
             const res = await loginAPI(form);
-
+            dispatch(setUser(res?.data?.data))
             // 🔥 store token
             Cookies.set("token", res.data.data.token);
 

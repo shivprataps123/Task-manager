@@ -5,17 +5,22 @@ import Topbar from "@/components/layout/Topbar";
 import KanbanBoard from "../features/task/components/KanbanBoard";
 import AddTaskModal from "../features/task/components/AddTaskModal";
 import TaskDetailModal from "../features/task/components/TaskDetailModal";
-import { fetchTasks, updateTask } from "@/store/slices/taskSlice";
+import { fetchTasks, updateTask, updateTaskAction } from "@/store/slices/taskSlice";
 
 export default function Dashboard() {
     const dispatch = useDispatch();
     const { tasks, loading, error } = useSelector((state) => state.task);
+    const { currentTeam } = useSelector((state) => state.team);
     const [collapsed, setCollapsed] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
 
     useEffect(() => {
-        dispatch(fetchTasks());
-    }, [dispatch]);
+        if (currentTeam?.team?.id) {
+            dispatch(fetchTasks(currentTeam.team.id));
+        } else {
+            dispatch(fetchTasks());
+        }
+    }, [dispatch, currentTeam]);
 
     const handleAddTask = (task) => {
         // Task is already added to Redux store via createTask thunk
@@ -68,15 +73,21 @@ export default function Dashboard() {
                     <AddTaskModal onAddTask={handleAddTask} />
                 </div>
                 <KanbanBoard
-                    tasks={tasks?.tasks}
+                    tasks={Array.isArray(tasks?.tasks) ? tasks.tasks : []}
                     setTasks={(updatedTasks) => {
                         // Handle task updates from drag and drop
-                        updatedTasks.forEach(task => {
-                            const originalTask = tasks?.tasks?.find(t => t.id === task.id);
-                            if (originalTask && originalTask.status !== task.status) {
-                                handleTaskStatusChange(task.id, task.status);
-                            }
-                        });
+                        if (Array.isArray(updatedTasks)) {
+                            updatedTasks.forEach(task => {
+                                const originalTask = tasks?.tasks?.find(t => t.id === task.id);
+                                console.log("Received updated tasks from KanbanBoard:", tasks?.tasks, task.id);
+                                if (originalTask && originalTask.status !== task.status) {
+                                    // Update Redux state immediately for real-time UI update
+                                    dispatch(updateTaskAction(task));
+                                    // Also update backend
+                                    handleTaskStatusChange(task.id, task.status);
+                                }
+                            });
+                        }
                     }}
                     onTaskClick={setSelectedTask}
                 />

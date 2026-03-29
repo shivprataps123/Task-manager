@@ -6,11 +6,16 @@ import CreateProjectModal from "../components/CreateProjectModal";
 export default function ProjectPage() {
     const dispatch = useDispatch();
     const { projects, loading, error } = useSelector((state) => state.project);
+    const { currentTeam } = useSelector((state) => state.team);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-        dispatch(fetchProjects());
-    }, [dispatch]);
+        if (currentTeam?.team?.id) {
+            dispatch(fetchProjects(currentTeam.team.id));
+        } else {
+            dispatch(fetchProjects());
+        }
+    }, [dispatch, currentTeam]);
 
     if (loading) {
         return (

@@ -61,7 +61,12 @@ export default function TeamPage() {
                 </div>
             )}
 
+            {console.log(membersList)}
             {/* 🔥 TEAM HEADER */}
+            <div className="flex gap-2.5">
+                <CreateTeamModal onCreated={() => dispatch(fetchTeams())} />
+
+            </div>
             {membersList?.length > 0 && (
                 <>
                     <div className="flex justify-between items-center mb-6">
@@ -72,7 +77,7 @@ export default function TeamPage() {
                             </p>
                         </div>
                         <div className="flex gap-2.5">
-                            <CreateTeamModal onCreated={() => dispatch(fetchTeams())} />
+                            {/* <CreateTeamModal onCreated={() => dispatch(fetchTeams())} /> */}
                             <CreateTeamMemberModal onMemberAdded={() => dispatch(fetchTeams())} />
                             <InviteMemberModal onAddMember={handleAddMember} />
                         </div>
@@ -83,7 +88,6 @@ export default function TeamPage() {
                         <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">
                             Members ({membersList?.length})
                         </div>
-
                         <div className="divide-y">
                             {membersList?.map((member) => (
                                 <div

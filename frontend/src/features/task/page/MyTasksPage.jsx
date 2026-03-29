@@ -7,11 +7,16 @@ import TaskDetailModal from "../components/TaskDetailModal";
 export default function MyTasksPage() {
     const dispatch = useDispatch();
     const { tasks, loading, error } = useSelector((state) => state.task);
+    const { currentTeam } = useSelector((state) => state.team);
     const [selectedTask, setSelectedTask] = useState(null);
 
     useEffect(() => {
-        dispatch(fetchTasks());
-    }, [dispatch]);
+        if (currentTeam?.team?.id) {
+            dispatch(fetchTasks(currentTeam.team.id));
+        } else {
+            dispatch(fetchTasks());
+        }
+    }, [dispatch, currentTeam]);
 
     if (loading) {
         return (

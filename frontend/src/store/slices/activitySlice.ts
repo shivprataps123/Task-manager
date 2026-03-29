@@ -25,8 +25,8 @@ const initialState: ActivityState = {
 
 export const fetchActivities = createAsyncThunk(
     'activity/fetchActivities',
-    async () => {
-        const response = await getActivitiesAPI();
+    async (teamId?: string) => {
+        const response = await getActivitiesAPI(teamId);
         return response.data.data;
     }
 );

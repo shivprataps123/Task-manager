@@ -3,14 +3,15 @@ import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
-import { Providers } from './app/providers.tsx'
+import { store } from './store/index.ts'
+import { Provider } from 'react-redux'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Providers>
+    <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </Providers>
+    </Provider>;
   </StrictMode>,
 )

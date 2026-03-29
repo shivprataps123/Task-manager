@@ -9,6 +9,7 @@ import projectRouter from "./routes/project.routes.js";
 import taskRouter from "./routes/task.routes.js";
 import commentRouter from "./routes/comment.routes.js";
 import activityRouter from "./routes/activity.routes.js";
+import labelRouter from "./routes/label.routes.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api", projectRouter);
 app.use("/api", taskRouter);
 app.use("/api", commentRouter);
 app.use("/api", activityRouter);
+app.use("/api", labelRouter);
 
 // error handler (ALWAYS LAST)
 app.use(errorHandler);

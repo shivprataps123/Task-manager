@@ -1,5 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { getMeAPI } from '@/features/auth/api';
 
 interface User {
     id: string;
@@ -20,6 +21,14 @@ const initialState: AuthState = {
     loading: false,
     error: null,
 };
+
+export const fetchCurrentUser = createAsyncThunk(
+    'auth/fetchCurrentUser',
+    async () => {
+        const response = await getMeAPI();
+        return response.data.data;
+    }
+);
 
 const authSlice = createSlice({
     name: 'auth',
@@ -47,6 +56,23 @@ const authSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchCurrentUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                state.isAuthenticated = true;
+            })
+            .addCase(fetchCurrentUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Failed to fetch user';
+                state.isAuthenticated = false;
+            });
     },
 });
 

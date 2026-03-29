@@ -5,10 +5,15 @@ import { fetchActivities } from "@/store/slices/activitySlice";
 export default function ActivityPage() {
     const dispatch = useDispatch();
     const { activities, loading, error } = useSelector((state) => state.activity);
+    const { currentTeam } = useSelector((state) => state.team);
 
     useEffect(() => {
-        dispatch(fetchActivities());
-    }, [dispatch]);
+        if (currentTeam?.team?.id) {
+            dispatch(fetchActivities(currentTeam.team.id));
+        } else {
+            dispatch(fetchActivities());
+        }
+    }, [dispatch, currentTeam]);
 
     if (loading) {
         return (

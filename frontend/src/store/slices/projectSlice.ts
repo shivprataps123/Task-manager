@@ -24,8 +24,8 @@ const initialState: ProjectState = {
 
 export const fetchProjects = createAsyncThunk(
     'project/fetchProjects',
-    async () => {
-        const response = await getProjectsAPI();
+    async (teamId?: string) => {
+        const response = await getProjectsAPI(teamId);
         return response.data.data;
     }
 );

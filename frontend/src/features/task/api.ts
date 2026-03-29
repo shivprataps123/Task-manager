@@ -4,8 +4,9 @@ export const createTaskAPI = (data) => {
     return axios.post("/tasks", data);
 };
 
-export const getTasksAPI = () => {
-    return axios.get("/tasks");
+export const getTasksAPI = (teamId?: string) => {
+    const params = teamId ? { teamId } : {};
+    return axios.get("/tasks", { params });
 };
 
 export const updateTaskAPI = (id, data) => {

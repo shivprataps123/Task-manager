@@ -18,18 +18,25 @@ export const logActivity = async ({
     })
 }
 
-export const getActivitiesService = async (userId) => {
+export const getActivitiesService = async (userId, teamId) => {
 
-    const activities = await prisma.activity.findMany({
-        where: {
-            project: {
-                team: {
-                    members: {
-                        some: { userId }
-                    }
+    const whereClause = {
+        project: {
+            team: {
+                members: {
+                    some: { userId }
                 }
             }
-        },
+        }
+    };
+
+    // If teamId is provided, filter by that specific team
+    if (teamId) {
+        whereClause.project.teamId = teamId;
+    }
+
+    const activities = await prisma.activity.findMany({
+        where: whereClause,
         orderBy: {
             createdAt: "desc"
         },

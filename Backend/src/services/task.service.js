@@ -68,10 +68,11 @@ export const getTasksService = async (
     page = 1,
     limit = 10,
     status,
-    assignedTo
+    assignedTo,
+    teamId
 ) => {
 
-    const cacheKey = `tasks:${userId}:${page}:${limit}:${status || "all"}:${assignedTo || "all"}`;
+    const cacheKey = `tasks:${userId}:${page}:${limit}:${status || "all"}:${assignedTo || "all"}:${teamId || "all"}`;
 
     // 🔥 1. Check Cache
     // const cached = await redisClient.get(cacheKey);
@@ -94,6 +95,11 @@ export const getTasksService = async (
             }
         }
     };
+
+    // If teamId is provided, filter by that specific team
+    if (teamId) {
+        filters.project.teamId = teamId;
+    }
 
     if (status) {
         filters.status = status;
@@ -222,8 +228,8 @@ export const deleteTaskService = async (taskId, userId) => {
 
     await logActivity({
         action: "task_deleted",
-        entity: "comment",
-        entityId: comment.id,
+        entity: "task",
+        entityId: taskId,
         userId,
         projectId: task.projectId
     });

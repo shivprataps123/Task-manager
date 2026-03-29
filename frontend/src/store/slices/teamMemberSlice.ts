@@ -7,10 +7,9 @@ interface TeamMember {
     userId: string;
     teamId: string;
     role: string;
-    user?: {
+    user: {
         id: string;
         email: string;
-        name: string;
     };
 }
 
@@ -80,6 +79,7 @@ const teamMemberSlice = createSlice({
             })
             .addCase(fetchTeamMembers.rejected, (state, action) => {
                 state.loading = false;
+                state.members = [];
                 state.error = action.error.message || 'Failed to fetch team members';
             })
             .addCase(addTeamMember.fulfilled, (state, action) => {

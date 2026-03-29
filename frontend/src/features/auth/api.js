@@ -7,3 +7,7 @@ export const signupAPI = (data) => {
 export const loginAPI = (data) => {
     return axios.post("/auth/login", data);
 };
+
+export const getMeAPI = () => {
+    return axios.get("/auth/me");
+};

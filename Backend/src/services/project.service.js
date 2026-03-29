@@ -22,17 +22,24 @@ export const createProjectService = async (name, teamId, userId) => {
     return project
 }
 
-export const getProjectsService = async (userId) => {
-    const projects = await prisma.project.findMany({
-        where: {
-            team: {
-                members: {
-                    some: {
-                        userId
-                    }
+export const getProjectsService = async (userId, teamId) => {
+    const whereClause = {
+        team: {
+            members: {
+                some: {
+                    userId
                 }
             }
-        },
+        }
+    };
+
+    // If teamId is provided, filter by that specific team
+    if (teamId) {
+        whereClause.teamId = teamId;
+    }
+
+    const projects = await prisma.project.findMany({
+        where: whereClause,
         include: {
             team: {
                 select: {

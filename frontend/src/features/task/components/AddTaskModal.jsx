@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTask } from "@/store/slices/taskSlice";
 import { fetchProjects } from "@/store/slices/projectSlice";
+import { fetchTasks } from "@/store/slices/taskSlice";
 
 export default function AddTaskModal({ onAddTask }) {
     const dispatch = useDispatch();
     const { projects } = useSelector((state) => state.project);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { currentTeam } = useSelector((state) => state.team);
 
     const [form, setForm] = useState({
         title: "",
@@ -28,6 +30,7 @@ export default function AddTaskModal({ onAddTask }) {
             await dispatch(createTask(form)).unwrap();
             setForm({ title: "", description: "", status: "todo", projectId: "" });
             setOpen(false);
+            dispatch(fetchTasks(currentTeam.team.id));
         } catch (error) {
             console.error("Failed to create task:", error);
         } finally {

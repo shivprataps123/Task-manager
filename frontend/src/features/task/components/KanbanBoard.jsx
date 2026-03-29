@@ -3,10 +3,13 @@ import {
     closestCorners,
     useDroppable,
 } from "@dnd-kit/core";
+import { useDispatch } from "react-redux";
+import { updateTask } from "@/store/slices/taskSlice";
 
 import TaskCard from "./TaskCard";
 
 export default function KanbanBoard({ tasks = [], setTasks, onTaskClick }) {
+    const dispatch = useDispatch();
 
     const columns = {
         todo: [],
@@ -28,13 +31,16 @@ export default function KanbanBoard({ tasks = [], setTasks, onTaskClick }) {
         const taskId = active.id;
         const newStatus = over.id;
 
-        setTasks((prev) =>
-            prev.map((task) =>
-                task.id === taskId
-                    ? { ...task, status: newStatus }
-                    : task
-            )
+        // Update local state
+        const updatedTasks = tasks.map((task) =>
+            task.id === taskId
+                ? { ...task, status: newStatus }
+                : task
         );
+        setTasks(updatedTasks);
+
+        // Update backend
+        dispatch(updateTask({ id: taskId, data: { status: newStatus } }));
     };
 
     return (

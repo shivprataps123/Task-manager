@@ -29,8 +29,12 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(fetchProjects());
-    }, [dispatch]);
+        if (currentTeam?.team?.id) {
+            dispatch(fetchProjects(currentTeam.team.id));
+        } else {
+            dispatch(fetchProjects());
+        }
+    }, [dispatch, currentTeam]);
 
     useEffect(() => {
         if (currentTeam?.id) {
@@ -73,7 +77,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                 </div>
 
                 {/* SCROLL AREA */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                <div className="overflow-y-auto p-4 space-y-6">
                     <TeamSwitcher />
                     {/* MAIN */}
                     <div className="space-y-2">
@@ -85,7 +89,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                     </div>
 
                     {/* TEAM MEMBERS */}
-                    {currentTeam && (
+                    {/* {currentTeam && (
                         <div>
                             {!collapsed && (
                                 <p className="text-xs text-gray-400 mb-2">TEAM MEMBERS</p>
@@ -108,15 +112,15 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                                 )}
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* PROJECTS */}
                     <div>
-                        {!collapsed && (
+                        {/* {!collapsed && (
                             <p className="text-xs text-gray-400 mb-2">PROJECTS</p>
-                        )}
+                        )} */}
 
-                        <div className="space-y-2">
+                        {/* <div className="space-y-2">
                             {projectsLoading ? (
                                 <div className="flex justify-center items-center h-20">
                                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
@@ -131,13 +135,13 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                                     />
                                 ))
                             )}
-                        </div>
+                        </div> */}
 
-                        {!collapsed && (
+                        {/* {!collapsed && (
                             <button className="mt-3 text-sm text-indigo-600 hover:underline">
                                 + New Project
                             </button>
-                        )}
+                        )} */}
                     </div>
                 </div>
 

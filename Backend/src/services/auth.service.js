@@ -1,7 +1,7 @@
 import prisma from "../prisma/prisma.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import AppError from "../utils/Apperror.js";
+import AppError from "../utils/AppError.js";
 
 export const signupUser = async ({ email, password }) => {
     const existingUser = await prisma.user.findUnique({
@@ -46,4 +46,22 @@ export const loginUser = async ({ email, password }) => {
     )
 
     return { user, token }
+}
+
+export const getCurrentUser = async (userId) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            email: true,
+            name: true,
+            createdAt: true
+        }
+    });
+
+    if (!user) {
+        throw new AppError("User not found", 404);
+    }
+
+    return user;
 }

@@ -28,8 +28,8 @@ const initialState: TaskState = {
 
 export const fetchTasks = createAsyncThunk(
     'task/fetchTasks',
-    async () => {
-        const response = await getTasksAPI();
+    async (teamId?: string) => {
+        const response = await getTasksAPI(teamId);
         return response.data;
     }
 );
@@ -79,19 +79,22 @@ const taskSlice = createSlice({
             state.currentTask = action.payload;
         },
         addTask: (state, action: PayloadAction<Task>) => {
-            state?.tasks?.push(action.payload);
+            state.tasks = Array.isArray(state.tasks) ? [...state.tasks, action.payload] : [action.payload];
         },
         updateTaskAction: (state, action: PayloadAction<Task>) => {
-            const index = state.tasks.findIndex(task => task.id === action.payload.id);
-            if (index !== -1) {
-                state.tasks[index] = action.payload;
+            if (Array.isArray(state.tasks?.tasks)) {
+                const index = state.tasks?.tasks?.findIndex(task => task.id === action.payload.id);
+                if (index !== -1) {
+                    state.tasks.tasks[index] = action.payload;
+                }
             }
             if (state.currentTask?.id === action.payload.id) {
                 state.currentTask = action.payload;
             }
         },
         removeTask: (state, action: PayloadAction<string>) => {
-            state.tasks = state.tasks.filter(task => task.id !== action.payload);
+            state.tasks.tasks = Array.isArray(state.tasks?.tasks) ? state.tasks?.tasks.filter(task => task.id !== action.payload) : [];
+            console.log("Removed task with ID:", action.payload, JSON.stringify(state.currentTask));
             if (state.currentTask?.id === action.payload) {
                 state.currentTask = null;
             }
@@ -122,27 +125,32 @@ const taskSlice = createSlice({
                 state.error = action.error.message || 'Failed to fetch tasks';
             })
             .addCase(createTask.fulfilled, (state, action) => {
-                state?.tasks?.push(action.payload);
+                console.log('Task created:', state.tasks, action.payload);
+                state.tasks = Array.isArray(state.tasks) ? [...state.tasks, action.payload] : [action.payload];
             })
             .addCase(updateTask.fulfilled, (state, action) => {
-                const index = state.tasks.findIndex(task => task.id === action.payload.id);
-                if (index !== -1) {
-                    state.tasks[index] = action.payload;
+                if (Array.isArray(state.tasks)) {
+                    const index = state.tasks.findIndex(task => task.id === action.payload.id);
+                    if (index !== -1) {
+                        state.tasks[index] = action.payload;
+                    }
                 }
                 if (state.currentTask?.id === action.payload.id) {
                     state.currentTask = action.payload;
                 }
             })
             .addCase(deleteTask.fulfilled, (state, action) => {
-                state.tasks = state.tasks.filter(task => task.id !== action.payload);
+                state.tasks.tasks = Array.isArray(state.tasks?.tasks) ? state.tasks?.tasks.filter(task => task.id !== action.payload) : [];
                 if (state.currentTask?.id === action.payload) {
                     state.currentTask = null;
                 }
             })
             .addCase(assignTask.fulfilled, (state, action) => {
-                const index = state.tasks.findIndex(task => task.id === action.payload.id);
-                if (index !== -1) {
-                    state.tasks[index] = action.payload;
+                if (Array.isArray(state.tasks)) {
+                    const index = state.tasks.findIndex(task => task.id === action.payload.id);
+                    if (index !== -1) {
+                        state.tasks[index] = action.payload;
+                    }
                 }
                 if (state.currentTask?.id === action.payload.id) {
                     state.currentTask = action.payload;
