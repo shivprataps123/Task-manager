@@ -84,7 +84,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                         <SidebarItem onClick={() => navigate("/dashboard")} icon={LayoutDashboard} label="Dashboard" collapsed={collapsed} />
                         <SidebarItem onClick={() => navigate("/my-tasks")} icon={CheckSquare} label="My Tasks" collapsed={collapsed} />
                         <SidebarItem onClick={() => navigate("/activity")} icon={Activity} label="Activity" collapsed={collapsed} />
-                        <SidebarItem onClick={() => navigate("/team")} icon={User2} label="Team" collapsed={collapsed} />
+                        <SidebarItem onClick={() => navigate("/team")} icon={User2} label="Teams" collapsed={collapsed} />
                         <SidebarItem onClick={() => navigate("/projects")} icon={Folder} label="Projects" collapsed={collapsed} />
                     </div>
 
