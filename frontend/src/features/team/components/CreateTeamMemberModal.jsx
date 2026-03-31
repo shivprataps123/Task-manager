@@ -39,6 +39,7 @@ export default function CreateTeamMemberModal({ onMemberAdded }) {
                 onMemberAdded();
             }
         } catch (err) {
+            console.log("Failed to add member:", err);
             setError(err.message || "Failed to add member");
         }
     };

@@ -10,10 +10,7 @@ export default function Topbar() {
     const navigate = useNavigate();
 
     const getInitial = () => {
-        // if (user?.user?.email) {
-        //     return user?.user?.email.charAt(0).toUpperCase();
-        // }
-        if (user?.user?.email) {
+        if (user?.user?.name) {
             return user?.user?.email.charAt(0).toUpperCase();
         }
         return "U";
@@ -58,7 +55,7 @@ export default function Topbar() {
                                 </div>
                                 <div>
                                     <p className="font-medium text-gray-900">
-                                        {user?.name || "User"}
+                                        {user?.user?.name || "User"}
                                     </p>
                                     <p className="text-sm text-gray-500">
                                         {user?.user?.email || "No email"}

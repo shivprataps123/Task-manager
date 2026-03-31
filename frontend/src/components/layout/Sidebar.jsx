@@ -11,7 +11,6 @@ import {
     LogOut,
     ChevronLeft,
     ChevronRight,
-    Building2,
     User2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -88,66 +87,14 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                         <SidebarItem onClick={() => navigate("/projects")} icon={Folder} label="Projects" collapsed={collapsed} />
                     </div>
 
-                    {/* TEAM MEMBERS */}
-                    {/* {currentTeam && (
-                        <div>
-                            {!collapsed && (
-                                <p className="text-xs text-gray-400 mb-2">TEAM MEMBERS</p>
-                            )}
-
-                            <div className="space-y-2">
-                                {membersLoading ? (
-                                    <div className="flex justify-center items-center h-20">
-                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-                                    </div>
-                                ) : (
-                                    members.map((member) => (
-                                        <SidebarItem
-                                            key={member.id}
-                                            icon={User2}
-                                            label={member.user?.email || "Unknown"}
-                                            collapsed={collapsed}
-                                        />
-                                    ))
-                                )}
-                            </div>
-                        </div>
-                    )} */}
-
                     {/* PROJECTS */}
                     <div>
-                        {/* {!collapsed && (
-                            <p className="text-xs text-gray-400 mb-2">PROJECTS</p>
-                        )} */}
-
-                        {/* <div className="space-y-2">
-                            {projectsLoading ? (
-                                <div className="flex justify-center items-center h-20">
-                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-                                </div>
-                            ) : (
-                                projects.map((project) => (
-                                    <SidebarItem
-                                        key={project.id}
-                                        icon={Folder}
-                                        label={project.name}
-                                        collapsed={collapsed}
-                                    />
-                                ))
-                            )}
-                        </div> */}
-
-                        {/* {!collapsed && (
-                            <button className="mt-3 text-sm text-indigo-600 hover:underline">
-                                + New Project
-                            </button>
-                        )} */}
                     </div>
                 </div>
 
                 {/* FOOTER */}
                 <div className="border-t p-4 space-y-2">
-                    <SidebarItem icon={Settings} label="Settings" collapsed={collapsed} />
+                    <SidebarItem onClick={() => navigate("/settings")} icon={Settings} label="Settings" collapsed={collapsed} />
                     <SidebarItem onClick={() => { navigate("/login"); Cookies.remove('token') }} icon={LogOut} label="Logout" collapsed={collapsed} />
 
                     {/* COLLAPSE BUTTON */}

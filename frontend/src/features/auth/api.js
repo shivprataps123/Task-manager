@@ -11,3 +11,7 @@ export const loginAPI = (data) => {
 export const getMeAPI = () => {
     return axios.get("/auth/me");
 };
+
+export const updateProfileAPI = (data) => {
+    return axios.put("/auth/profile", data);
+};

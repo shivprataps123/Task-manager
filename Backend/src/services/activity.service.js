@@ -47,7 +47,7 @@ export const getActivitiesService = async (userId, teamId, page = 1, limit = 20)
             },
             include: {
                 user: {
-                    select: { id: true, email: true }
+                    select: { id: true, email: true, name: true }
                 },
                 project: {
                     select: { id: true, name: true }

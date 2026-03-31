@@ -15,6 +15,7 @@ import PublicRoute from "@/components/common/PublicRoute";
 import MyTasksPage from "../features/task/page/MyTasksPage";
 import ActivityPage from "../features/activity/page/ActivityPage";
 import ProjectPage from "../features/project/page/ProjectPage";
+import SettingsPage from "../features/settings/page/SettingsPage";
 
 export default function AppRouter() {
     return (
@@ -59,6 +60,7 @@ export default function AppRouter() {
                 <Route path="/my-tasks" element={<MyTasksPage />} />
                 <Route path="/activity" element={<ActivityPage />} />
                 <Route path="/projects" element={<ProjectPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
             </Route>
 
         </Routes>

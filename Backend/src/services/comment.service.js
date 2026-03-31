@@ -93,7 +93,7 @@ export const getCommentsService = async (taskId, userId) => {
         orderBy: { createdAt: "asc" },
         include: {
             user: {
-                select: { id: true, email: true }
+                select: { id: true, email: true, name: true }
             }
         }
     });

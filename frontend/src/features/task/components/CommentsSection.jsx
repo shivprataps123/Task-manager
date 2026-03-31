@@ -61,7 +61,7 @@ export default function CommentsSection({ comments, onAddComment, taskId, loadin
                         className="bg-gray-100 p-3 rounded-lg"
                     >
                         <p className="text-xs text-gray-500">
-                            {c.user?.email || "Unknown user"}
+                            {c.user?.name || "Unknown user"}
                         </p>
 
                         <p className="text-sm text-gray-800 mt-1">

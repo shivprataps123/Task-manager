@@ -3,7 +3,7 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import AppError from "../utils/AppError.js";
 
-export const signupUser = async ({ email, password }) => {
+export const signupUser = async ({ email, password, name }) => {
     const existingUser = await prisma.user.findUnique({
         where: { email }
     });
@@ -17,7 +17,8 @@ export const signupUser = async ({ email, password }) => {
     const user = await prisma.user.create({
         data: {
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            name: name || null
         }
     })
     return user
@@ -62,6 +63,40 @@ export const getCurrentUser = async (userId) => {
     if (!user) {
         throw new AppError("User not found", 404);
     }
+
+    return user;
+}
+
+export const updateUserProfile = async (userId, { name, email }) => {
+    const updateData = {};
+
+    if (name !== undefined) {
+        updateData.name = name;
+    }
+
+    if (email !== undefined) {
+        // Check if email is already taken by another user
+        const existingUser = await prisma.user.findUnique({
+            where: { email }
+        });
+
+        if (existingUser && existingUser.id !== userId) {
+            throw new AppError("Email already in use", 400);
+        }
+
+        updateData.email = email;
+    }
+
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: updateData,
+        select: {
+            id: true,
+            email: true,
+            name: true,
+            createdAt: true
+        }
+    });
 
     return user;
 }

@@ -6,6 +6,7 @@ export default function Signup() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
+        name: "",
         email: "",
         password: "",
     });
@@ -48,6 +49,13 @@ export default function Signup() {
                     </h2>
 
                     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+
+                        <input
+                            name="name"
+                            placeholder="Full Name"
+                            onChange={handleChange}
+                            className="w-full border border-gray-200 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
 
                         <input
                             name="email"

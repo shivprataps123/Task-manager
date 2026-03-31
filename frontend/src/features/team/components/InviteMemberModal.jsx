@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { inviteMemberAPI } from "../api";
 
-export default function InviteMemberModal({ onAddMember }) {
+export default function InviteMemberModal({ onAddMember, teamId }) {
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState("");
 
@@ -11,7 +11,7 @@ export default function InviteMemberModal({ onAddMember }) {
         try {
             await inviteMemberAPI({
                 email,
-                // teamId,
+                teamId,
             });
 
             alert("Invite sent");

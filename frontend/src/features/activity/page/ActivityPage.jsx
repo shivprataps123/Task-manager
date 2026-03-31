@@ -17,6 +17,12 @@ export default function ActivityPage() {
         }
     }, [dispatch, currentTeam, currentPage]);
 
+    const activityAction = {
+        comment_added: "added a comment",
+        task_created: "created a task",
+        task_updated: "updated a task",
+        task_deleted: "deleted a task",
+    }
     if (loading) {
         return (
             <div className="p-6 max-w-4xl">
@@ -65,7 +71,7 @@ export default function ActivityPage() {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm font-medium text-gray-900">
-                                            {activity?.user?.email} is {activity?.action} in {activity?.project?.name} project.
+                                            {activity?.user?.name} {activityAction[activity?.action]} in {activity?.project?.name} project.
                                         </p>
                                         <p className="text-xs text-gray-500 mt-1">
                                             {new Date(activity?.createdAt).toLocaleString()}

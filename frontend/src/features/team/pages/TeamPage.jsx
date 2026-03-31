@@ -79,7 +79,7 @@ export default function TeamPage() {
                         <div className="flex gap-2.5">
                             {/* <CreateTeamModal onCreated={() => dispatch(fetchTeams())} /> */}
                             <CreateTeamMemberModal onMemberAdded={() => dispatch(fetchTeams())} />
-                            <InviteMemberModal onAddMember={handleAddMember} />
+                            <InviteMemberModal onAddMember={handleAddMember} teamId={currentTeam?.team?.id} />
                         </div>
                     </div>
 
