@@ -94,7 +94,6 @@ const taskSlice = createSlice({
         },
         removeTask: (state, action: PayloadAction<string>) => {
             state.tasks.tasks = Array.isArray(state.tasks?.tasks) ? state.tasks?.tasks.filter(task => task.id !== action.payload) : [];
-            console.log("Removed task with ID:", action.payload, JSON.stringify(state.currentTask));
             if (state.currentTask?.id === action.payload) {
                 state.currentTask = null;
             }
@@ -125,7 +124,6 @@ const taskSlice = createSlice({
                 state.error = action.error.message || 'Failed to fetch tasks';
             })
             .addCase(createTask.fulfilled, (state, action) => {
-                console.log('Task created:', state.tasks, action.payload);
                 state.tasks = Array.isArray(state.tasks) ? [...state.tasks, action.payload] : [action.payload];
             })
             .addCase(updateTask.fulfilled, (state, action) => {

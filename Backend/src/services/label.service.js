@@ -2,31 +2,33 @@ import prisma from "../prisma/prisma.js"
 import AppError from "../utils/AppError.js"
 
 export const createLabelService = async (name, color, projectId, userId) => {
-    // Check if user is part of project team
-    const project = await prisma.project.findUnique({
-        where: { id: projectId },
-        include: {
-            team: {
-                include: {
-                    members: true
+    // If projectId is provided, check if user is part of project team
+    if (projectId) {
+        const project = await prisma.project.findUnique({
+            where: { id: projectId },
+            include: {
+                team: {
+                    include: {
+                        members: true
+                    }
                 }
             }
+        });
+
+        if (!project) {
+            throw new AppError("Project not found", 404);
         }
-    });
 
-    if (!project) {
-        throw new AppError("Project not found", 404);
+        const isMember = project.team.members.some(
+            (m) => m.userId === userId
+        );
+
+        if (!isMember) {
+            throw new AppError("Not authorized", 403);
+        }
     }
 
-    const isMember = project.team.members.some(
-        (m) => m.userId === userId
-    );
-
-    if (!isMember) {
-        throw new AppError("Not authorized", 403);
-    }
-
-    // Create label
+    // Create label (global if projectId is null, project-specific otherwise)
     const label = await prisma.label.create({
         data: {
             name,
@@ -39,30 +41,33 @@ export const createLabelService = async (name, color, projectId, userId) => {
 }
 
 export const getLabelsService = async (projectId, userId) => {
-    // Check if user is part of project team
-    const project = await prisma.project.findUnique({
-        where: { id: projectId },
-        include: {
-            team: {
-                include: {
-                    members: true
+    // If projectId is provided, check if user is part of project team
+    if (projectId) {
+        const project = await prisma.project.findUnique({
+            where: { id: projectId },
+            include: {
+                team: {
+                    include: {
+                        members: true
+                    }
                 }
             }
+        });
+
+        if (!project) {
+            throw new AppError("Project not found", 404);
         }
-    });
 
-    if (!project) {
-        throw new AppError("Project not found", 404);
+        const isMember = project.team.members.some(
+            (m) => m.userId === userId
+        );
+
+        if (!isMember) {
+            throw new AppError("Not authorized", 403);
+        }
     }
 
-    const isMember = project.team.members.some(
-        (m) => m.userId === userId
-    );
-
-    if (!isMember) {
-        throw new AppError("Not authorized", 403);
-    }
-
+    // Fetch labels (global if projectId is null, project-specific otherwise)
     const labels = await prisma.label.findMany({
         where: { projectId },
         orderBy: { createdAt: "desc" }

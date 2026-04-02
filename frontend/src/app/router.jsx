@@ -4,6 +4,10 @@ import PublicLayout from "./PublicLayout";
 import AppLayout from "./AppLayout";
 
 import LandingPage from "@/pages/LandingPage";
+import ProductPage from "@/pages/ProductPage";
+import SolutionsPage from "@/pages/SolutionsPage";
+import PricingPage from "@/pages/PricingPage";
+import ResourcesPage from "@/pages/ResourcesPage";
 import Login from "@/features/auth/pages/Login";
 import Signup from "@/features/auth/pages/Signup";
 
@@ -25,6 +29,10 @@ export default function AppRouter() {
             <Route element={<PublicLayout />}>
 
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/product" element={<ProductPage />} />
+                <Route path="/solutions" element={<SolutionsPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/resources" element={<ResourcesPage />} />
 
                 <Route
                     path="/login"

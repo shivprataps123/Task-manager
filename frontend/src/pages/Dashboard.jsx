@@ -79,7 +79,6 @@ export default function Dashboard() {
                         if (Array.isArray(updatedTasks)) {
                             updatedTasks.forEach(task => {
                                 const originalTask = tasks?.tasks?.find(t => t.id === task.id);
-                                console.log("Received updated tasks from KanbanBoard:", tasks?.tasks, task.id);
                                 if (originalTask && originalTask.status !== task.status) {
                                     // Update Redux state immediately for real-time UI update
                                     dispatch(updateTaskAction(task));

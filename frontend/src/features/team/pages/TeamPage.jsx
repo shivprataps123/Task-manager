@@ -60,8 +60,6 @@ export default function TeamPage() {
 
                 </div>
             )}
-
-            {console.log(membersList)}
             {/* 🔥 TEAM HEADER */}
             <div className="flex gap-2.5">
                 <CreateTeamModal onCreated={() => dispatch(fetchTeams())} />

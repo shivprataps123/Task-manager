@@ -56,6 +56,7 @@ export const getCurrentUser = async (userId) => {
             id: true,
             email: true,
             name: true,
+            profilePhoto: true,
             createdAt: true
         }
     });
@@ -67,7 +68,7 @@ export const getCurrentUser = async (userId) => {
     return user;
 }
 
-export const updateUserProfile = async (userId, { name, email }) => {
+export const updateUserProfile = async (userId, { name, email, profilePhoto }) => {
     const updateData = {};
 
     if (name !== undefined) {
@@ -87,6 +88,10 @@ export const updateUserProfile = async (userId, { name, email }) => {
         updateData.email = email;
     }
 
+    if (profilePhoto !== undefined) {
+        updateData.profilePhoto = profilePhoto;
+    }
+
     const user = await prisma.user.update({
         where: { id: userId },
         data: updateData,
@@ -94,6 +99,7 @@ export const updateUserProfile = async (userId, { name, email }) => {
             id: true,
             email: true,
             name: true,
+            profilePhoto: true,
             createdAt: true
         }
     });

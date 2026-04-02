@@ -47,7 +47,9 @@ export const getMe = async (req, res, next) => {
 export const updateProfile = async (req, res, next) => {
     try {
         const { name, email } = req.body;
-        const user = await updateUserProfile(req.userId, { name, email });
+        const profilePhoto = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+        const user = await updateUserProfile(req.userId, { name, email, profilePhoto });
 
         res.status(200).json({
             success: true,
