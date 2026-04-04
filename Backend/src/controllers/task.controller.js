@@ -22,7 +22,7 @@ export const createTask = async (req, res, next) => {
 
 export const getTasks = async (req, res, next) => {
     try {
-        const { page = 1, limit = 10, status, assignedTo, teamId } = req.query;
+        const { page = 1, limit = 10, status, assignedTo, teamId, projectId } = req.query;
 
         const result = await getTasksService(
             req.userId,
@@ -30,7 +30,8 @@ export const getTasks = async (req, res, next) => {
             Number(limit),
             status,
             assignedTo,
-            teamId
+            teamId,
+            projectId
         );
 
         res.status(200).json({

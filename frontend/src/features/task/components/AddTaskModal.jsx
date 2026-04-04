@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createTask } from "@/store/slices/taskSlice";
 import { fetchProjects } from "@/store/slices/projectSlice";
 import { fetchTasks } from "@/store/slices/taskSlice";
+import { fetchTeamMembers } from "@/store/slices/teamMemberSlice";
 
 export default function AddTaskModal({ onAddTask }) {
     const dispatch = useDispatch();
@@ -10,17 +11,27 @@ export default function AddTaskModal({ onAddTask }) {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const { currentTeam } = useSelector((state) => state.team);
+    const { members } = useSelector((state) => state.teamMember);
 
     const [form, setForm] = useState({
         title: "",
         description: "",
         status: "todo",
         projectId: "",
+        assignedToId: "",
     });
 
     useEffect(() => {
-        dispatch(fetchProjects());
-    }, [dispatch]);
+        if (currentTeam?.team?.id) {
+            dispatch(fetchProjects(currentTeam.team.id));
+        }
+    }, [dispatch, currentTeam]);
+
+    useEffect(() => {
+        if (currentTeam?.team?.id) {
+            dispatch(fetchTeamMembers(currentTeam.team.id));
+        }
+    }, [dispatch, currentTeam]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,7 +39,7 @@ export default function AddTaskModal({ onAddTask }) {
 
         try {
             await dispatch(createTask(form)).unwrap();
-            setForm({ title: "", description: "", status: "todo", projectId: "" });
+            setForm({ title: "", description: "", status: "todo", projectId: "", assignedToId: "" });
             setOpen(false);
             dispatch(fetchTasks(currentTeam.team.id));
         } catch (error) {
@@ -105,6 +116,21 @@ export default function AddTaskModal({ onAddTask }) {
                                 <option value="todo">Todo</option>
                                 <option value="in-progress">In Progress</option>
                                 <option value="done">Done</option>
+                            </select>
+
+                            <select
+                                value={form.assignedToId}
+                                onChange={(e) =>
+                                    setForm({ ...form, assignedToId: e.target.value })
+                                }
+                                className="w-full border px-3 py-2 rounded-lg"
+                            >
+                                <option value="">Assign to...</option>
+                                {members.map((member) => (
+                                    <option key={member.id} value={member.user.id}>
+                                        {member.user.name || member.user.email}
+                                    </option>
+                                ))}
                             </select>
 
                             <div className="flex justify-end gap-2">

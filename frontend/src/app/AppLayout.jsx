@@ -12,11 +12,11 @@ export default function AppLayout() {
             <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
             <div
-                className={`flex-1 flex flex-col transition-all duration-300
+                className={`flex-1 flex flex-col transition-all duration-300 min-h-screen
         ${collapsed ? "md:ml-20" : "md:ml-64"}`}
             >
                 <Topbar />
-                <div className="p-6">
+                <div className="flex-1 p-6">
                     <Outlet />
                 </div>
             </div>

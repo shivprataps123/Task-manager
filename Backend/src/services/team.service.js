@@ -26,7 +26,7 @@ export const getUserTeamService = async (userId) => {
     const teams = await prisma.teamMember.findMany({
         where: { userId },
         include: {
-            team: true
+            team: true,
         }
     })
     return teams

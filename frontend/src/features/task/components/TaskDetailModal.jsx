@@ -3,15 +3,20 @@ import { useDispatch, useSelector } from "react-redux";
 import CommentsSection from "./CommentsSection";
 import { updateTask, deleteTask } from "@/store/slices/taskSlice";
 import { fetchComments } from "@/store/slices/commentSlice";
+import { fetchTeamMembers } from "@/store/slices/teamMemberSlice";
+import { assignTask } from "@/store/slices/taskSlice";
 
 export default function TaskDetailModal({ task, onClose, onUpdate }) {
     const dispatch = useDispatch();
     const { comments, loading: commentsLoading } = useSelector((state) => state.comment);
+    const { members } = useSelector((state) => state.teamMember);
+    const { currentTeam } = useSelector((state) => state.team);
     const [form, setForm] = useState({
         title: "",
         description: "",
         status: "todo",
     });
+    const [assignedUser, setAssignedUser] = useState(null);
     const [loading, setLoading] = useState(false);
 
     // 🔥 sync when task changes
@@ -22,11 +27,44 @@ export default function TaskDetailModal({ task, onClose, onUpdate }) {
                 description: task.description,
                 status: task.status,
             });
+            setAssignedUser(task.assignedTo || null);
             dispatch(fetchComments(task.id));
         }
     }, [task, dispatch]);
 
+    useEffect(() => {
+        if (currentTeam?.team?.id) {
+            dispatch(fetchTeamMembers(currentTeam.team.id));
+        }
+    }, [dispatch, currentTeam]);
+
     if (!task) return null;
+
+    const handleAssign = async (assignedToId) => {
+        try {
+            const result = await dispatch(assignTask({ 
+                id: task.id, 
+                data: { assigneeId: assignedToId } 
+            })).unwrap();
+            setAssignedUser(result.assignedTo || null);
+            if (onUpdate) onUpdate(result);
+        } catch (error) {
+            console.error("Failed to assign task:", error);
+        }
+    };
+
+    const handleUnassign = async () => {
+        try {
+            const result = await dispatch(updateTask({ 
+                id: task.id, 
+                data: { assignedToId: null } 
+            })).unwrap();
+            setAssignedUser(null);
+            if (onUpdate) onUpdate(result);
+        } catch (error) {
+            console.error("Failed to unassign task:", error);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -105,6 +143,29 @@ export default function TaskDetailModal({ task, onClose, onUpdate }) {
                         <option value="in-progress">In Progress</option>
                         <option value="done">Done</option>
                     </select>
+
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">Assigned to:</span>
+                        <select
+                            value={assignedUser?.id || ""}
+                            onChange={(e) => {
+                                const assignedToId = e.target.value;
+                                if (!assignedToId) {
+                                    handleUnassign();
+                                } else {
+                                    handleAssign(assignedToId);
+                                }
+                            }}
+                            className="w-full border px-3 py-2 rounded-lg"
+                        >
+                            <option value="">Unassigned</option>
+                            {members.map((member) => (
+                                <option key={member.id} value={member.user.id}>
+                                    {member.user.name || member.user.email}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
                     <div className="flex justify-between">
                         <button

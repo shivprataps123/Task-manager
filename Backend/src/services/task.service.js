@@ -49,16 +49,38 @@ export const createTaskService = async (data, userId) => {
             projectId,
             assignedToId,
             status: "todo"
+        },
+        include: {
+            assignedTo: {
+                select: { id: true, email: true, name: true }
+            }
         }
     });
 
-    await logActivity({
-        action: "task_created",
-        entity: "task",
-        entityId: task.id,
-        userId,
-        projectId: task.projectId
-    });
+    if (assignedToId) {
+        await logActivity({
+            action: "task_assigned",
+            entity: "task",
+            entityId: task.id,
+            userId,
+            projectId: task.projectId,
+            details: JSON.stringify({
+                assignedTo: {
+                    id: task.assignedTo.id,
+                    email: task.assignedTo.email,
+                    name: task.assignedTo.name || task.assignedTo.email
+                }
+            })
+        });
+    } else {
+        await logActivity({
+            action: "task_created",
+            entity: "task",
+            entityId: task.id,
+            userId,
+            projectId: task.projectId
+        });
+    }
 
     return task;
 };
@@ -69,10 +91,11 @@ export const getTasksService = async (
     limit = 10,
     status,
     assignedTo,
-    teamId
+    teamId,
+    projectId
 ) => {
 
-    const cacheKey = `tasks:${userId}:${page}:${limit}:${status || "all"}:${assignedTo || "all"}:${teamId || "all"}`;
+    const cacheKey = `tasks:${userId}:${page}:${limit}:${status || "all"}:${assignedTo || "all"}:${teamId || "all"}:${projectId || "all"}`;
 
     // 🔥 1. Check Cache
     // const cached = await redisClient.get(cacheKey);
@@ -109,6 +132,10 @@ export const getTasksService = async (
         filters.assignedToId = assignedTo;
     }
 
+    if (projectId) {
+        filters.projectId = projectId;
+    }
+
     const [tasks, total] = await Promise.all([
         prisma.task.findMany({
             where: filters,
@@ -122,7 +149,7 @@ export const getTasksService = async (
                     select: { id: true, name: true }
                 },
                 assignedTo: {
-                    select: { id: true, email: true }
+                    select: { id: true, email: true, name: true }
                 }
             }
         }),
@@ -163,6 +190,9 @@ export const updateTaskService = async (taskId, data, userId) => {
                         include: { members: true }
                     }
                 }
+            },
+            assignedTo: {
+                select: { id: true, email: true, name: true }
             }
         }
     });
@@ -181,16 +211,48 @@ export const updateTaskService = async (taskId, data, userId) => {
 
     const updated = await prisma.task.update({
         where: { id: taskId },
-        data
+        data,
+        include: {
+            assignedTo: {
+                select: { id: true, email: true, name: true }
+            }
+        }
     });
 
-    await logActivity({
-        action: "task_updated",
-        entity: "task",
-        entityId: task.id,
-        userId,
-        projectId: task.projectId
-    });
+    if (data.assignedToId !== undefined) {
+        if (data.assignedToId) {
+            await logActivity({
+                action: "task_assigned",
+                entity: "task",
+                entityId: task.id,
+                userId,
+                projectId: task.projectId,
+                details: JSON.stringify({
+                    assignedTo: {
+                        id: updated.assignedTo?.id || data.assignedToId,
+                        email: updated.assignedTo?.email || "Unknown",
+                        name: updated.assignedTo?.name || updated.assignedTo?.email || "Unknown"
+                    }
+                })
+            });
+        } else {
+            await logActivity({
+                action: "task_unassigned",
+                entity: "task",
+                entityId: task.id,
+                userId,
+                projectId: task.projectId
+            });
+        }
+    } else {
+        await logActivity({
+            action: "task_updated",
+            entity: "task",
+            entityId: task.id,
+            userId,
+            projectId: task.projectId
+        });
+    }
 
     return updated;
 };
@@ -270,7 +332,30 @@ export const assignTaskService = async (taskId, assignedToId, userId) => {
         throw new AppError("Not authorized", 403);
     }
 
-    // 3. Check assigned user is part of team
+    // 3. Handle unassignment
+    if (!assignedToId) {
+        const updatedTask = await prisma.task.update({
+            where: { id: taskId },
+            data: { assignedToId: null },
+            include: {
+                assignedTo: {
+                    select: { id: true, email: true, name: true }
+                }
+            }
+        });
+
+        await logActivity({
+            action: "task_unassigned",
+            entity: "task",
+            entityId: task.id,
+            userId,
+            projectId: task.projectId
+        });
+
+        return updatedTask;
+    }
+
+    // 4. Check assigned user is part of team
     const isValidAssignee = teamMembers.some(
         (m) => m.userId === assignedToId
     );
@@ -279,7 +364,7 @@ export const assignTaskService = async (taskId, assignedToId, userId) => {
         throw new AppError("User not in team", 400);
     }
 
-    // 4. Assign task
+    // 5. Assign task
     const updatedTask = await prisma.task.update({
         where: { id: taskId },
         data: {
@@ -292,12 +377,25 @@ export const assignTaskService = async (taskId, assignedToId, userId) => {
         }
     });
 
+    const assignee = await prisma.user.findUnique({
+        where: { id: assignedToId },
+        select: { id: true, email: true, name: true }
+    });
+
     await logActivity({
         action: "task_assigned",
         entity: "task",
         entityId: task.id,
         userId,
-        projectId: task.projectId
+        projectId: task.projectId,
+        details: JSON.stringify({
+            assignedTo: {
+                id: assignee.id,
+                email: assignee.email,
+                name: assignee.name || assignee.email
+            },
+            assignedBy: userId
+        })
     });
 
     return updatedTask;

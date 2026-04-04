@@ -22,6 +22,7 @@ export default function ActivityPage() {
         task_created: "created a task",
         task_updated: "updated a task",
         task_deleted: "deleted a task",
+        task_assigned: "assigned a task",
     }
     if (loading) {
         return (

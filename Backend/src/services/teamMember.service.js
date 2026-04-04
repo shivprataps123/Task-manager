@@ -59,7 +59,7 @@ export const getMemberService = async (teamId, userId) => {
         where: { teamId },
         include: {
             user: {
-                select: { id: true, email: true }
+                select: { id: true, email: true, name: true }
             }
         }
     })

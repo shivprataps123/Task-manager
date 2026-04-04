@@ -28,8 +28,8 @@ const initialState: TaskState = {
 
 export const fetchTasks = createAsyncThunk(
     'task/fetchTasks',
-    async (teamId?: string) => {
-        const response = await getTasksAPI(teamId);
+    async ({ teamId, projectId }: { teamId?: string; projectId?: string }) => {
+        const response = await getTasksAPI(teamId, projectId);
         return response.data;
     }
 );

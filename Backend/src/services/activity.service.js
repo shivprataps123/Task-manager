@@ -5,7 +5,8 @@ export const logActivity = async ({
     entity,
     entityId,
     userId,
-    projectId
+    projectId,
+    details
 }) => {
     await prisma.activity.create({
         data: {
@@ -13,7 +14,8 @@ export const logActivity = async ({
             entity,
             entityId,
             userId,
-            projectId
+            projectId,
+            details: details ? JSON.parse(details) : undefined
         }
     })
 }
